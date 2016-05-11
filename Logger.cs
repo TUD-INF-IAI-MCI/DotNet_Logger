@@ -38,25 +38,44 @@ namespace tud.mci.tangram
 
         #region public
 
+        /// <summary>
+        /// Gets the singleton instance.
+        /// </summary>
+        /// <value>
+        /// The instance.
+        /// </value>
         public static Logger Instance { get { return _instance; } }
         private String _logPath;
+        /// <summary>
+        /// Gets or sets the directory path to the log file directory. 
+        /// The file itself will be called 'log.log'.
+        /// </summary>
+        /// <value>
+        /// The directory path.
+        /// </value>
         public String LogPath
         {
             get { return _logPath; }
             set { _logPath = value; isLogFileReady(); }
         }
+        /// <summary>
+        /// Gets or sets the priority threshold for what is written in the log file.
+        /// </summary>
+        /// <value>
+        /// The priority threshold.
+        /// </value>
         public LogPriority Priority { get; set; }
 
         #endregion
 
         #endregion
 
-        #region Constructor & Desstructor
+        #region Constructor & Destructor
 
         Logger()
         {
             LogPath = GetCurrentDllDirectory() + "\\log.log";
-            Priority = LogPriority.DEBUG;
+            Priority = LogPriority.MIDDLE;
             enqueue("___________________________________________________");
         }
 
@@ -72,6 +91,9 @@ namespace tud.mci.tangram
             catch { }
         }
 
+        /// <summary>
+        /// Führt anwendungsspezifische Aufgaben durch, die mit der Freigabe, der Zurückgabe oder dem Zurücksetzen von nicht verwalteten Ressourcen zusammenhängen.
+        /// </summary>
         public void Dispose()
         {
             this.outputQueueThread.Abort();
@@ -287,6 +309,10 @@ namespace tud.mci.tangram
         #endregion
 
 
+        /// <summary>
+        /// Gets the current file path of this dll.
+        /// </summary>
+        /// <returns>file path of this dll</returns>
         public static string GetCurrentDllPath()
         {
             string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
@@ -295,6 +321,10 @@ namespace tud.mci.tangram
             return path;
         }
 
+        /// <summary>
+        /// Gets the current directory path of this dll.
+        /// </summary>
+        /// <returns>directory path of this dll</returns>
         public static string GetCurrentDllDirectory()
         {
             string path = GetCurrentDllPath();
@@ -358,13 +388,31 @@ namespace tud.mci.tangram
         
         #endregion
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogMsg"/> struct.
+        /// </summary>
+        /// <param name="sender">The sending object of this message.</param>
+        /// <param name="exception">The exception to be logged.</param>
         public LogMsg(Object sender, Exception exception) : this(LogPriority.IMPORTANT, sender, String.Empty, exception) { }
-        public LogMsg(LogPriority priority, Object sender, Exception exception) : this(priority, sender, String.Empty, exception) { }
-        public LogMsg(LogPriority priority, Object sender, String message) : this(priority, sender, message, null) { }
         /// <summary>
         /// Initializes a new instance of the <see cref="LogMsg"/> struct.
         /// </summary>
         /// <param name="priority">The priority of the log message. The logger filters the messages to write by this priority levels.</param>
+        /// <param name="sender">The sending object of this message.</param>
+        /// <param name="exception">The exception to be logged.</param>
+        public LogMsg(LogPriority priority, Object sender, Exception exception) : this(priority, sender, String.Empty, exception) { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogMsg"/> struct.
+        /// </summary>
+        /// <param name="priority">The priority of the log message. The logger filters the messages to write by this priority levels.</param>
+        /// <param name="sender">The sending object of this message.</param>
+        /// <param name="message">The message to be logged.</param>
+        public LogMsg(LogPriority priority, Object sender, String message) : this(priority, sender, message, null) { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogMsg" /> struct.
+        /// </summary>
+        /// <param name="priority">The priority of the log message. The logger filters the messages to write by this priority levels.</param>
+        /// <param name="sender">The sending object of this message.</param>
         /// <param name="message">Additional message to declare what that log means.</param>
         /// <param name="exception">An optional occurred Exception.</param>
         public LogMsg(LogPriority priority, Object sender, String message, Exception exception)
@@ -402,7 +450,7 @@ namespace tud.mci.tangram
         /// </summary>
         IMPORTANT = 2,
         /// <summary>
-        /// Middle Priority. Log will happen regularly, like process starts.
+        /// Middle Priority. Log will happen regularly, such as process starts.
         /// </summary>
         MIDDLE = 4,
         /// <summary>
@@ -412,7 +460,6 @@ namespace tud.mci.tangram
         /// <summary>
         /// Only for debug reasons. Log will happen very often, like checking loops and fast system events.
         /// This priority should not be logged in Release-Version or it should have a very good reason.
-        /// You could use LodDebug instead of Log to get Debug-Priority. LogDebug does nothing in Release!
         /// </summary>
         DEBUG = 8
     };
