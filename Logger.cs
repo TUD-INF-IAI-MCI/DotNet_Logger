@@ -142,7 +142,7 @@ namespace tud.mci.tangram
         private void buildThread()
         {
             outputQueueThread = new Thread(new ThreadStart(checkOutputQueue));
-            outputQueueThread.Name = "TangramLectorAudioQueueThread";
+            outputQueueThread.Name = "LoggerQueueThread";
             outputQueueThread.IsBackground = true;
             outputQueueThread.Start();
         }
