@@ -66,6 +66,14 @@ namespace tud.mci.tangram
         /// </value>
         public LogPriority Priority { get; set; }
 
+        /// <summary>
+        /// Gets or sets the maximum size of the log file [in byte].
+        /// </summary>
+        /// <value>
+        /// The maximum size of the log file [in byte].
+        /// </value>
+        public uint MaxLogFileSize { get; set; }
+
         #endregion
 
         #endregion
@@ -74,6 +82,7 @@ namespace tud.mci.tangram
 
         Logger()
         {
+            MaxLogFileSize = 5 * 1024 * 1024;
             LogPath = GetCurrentDllDirectory() + "\\log.log";
             Priority = LogPriority.MIDDLE;
             enqueue("___________________________________________________");
@@ -354,7 +363,15 @@ namespace tud.mci.tangram
                     catch{}
                 }
 
-                if (File.Exists(LogPath)) return true;
+                if (File.Exists(LogPath))
+                {
+                    FileInfo f = new FileInfo(LogPath);
+                    if (f.Length > MaxLogFileSize)
+                    {
+                        File.WriteAllBytes(LogPath, new byte[0]);
+                    }
+                    return true;
+                }
             }
             return false;
         }
